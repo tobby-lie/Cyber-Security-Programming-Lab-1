@@ -1,6 +1,7 @@
 # Tobby Lie
 # CSCI 4742
 # Lab1
+# Last modified: 9/5/19 @ 11:38PM
 
 import ipaddress
 
@@ -176,10 +177,67 @@ def main():
     print("IPs in Subnet:")
     printIPsInSubnet(ip, netmask)
 
+    ############################################################################################
+    # this section is necessary to prevent "host bits set" error
+    netmask_2 = ""
+    # get bitmask for cidrSubnet
+    for x in range(0, int(cidrSubnet)):
+        netmask_2 += str(1)
+    for x in range(0, 32 - int(cidrSubnet)):
+        netmask_2 += str(0)
+
+    # get binary representation of ip octets and create long string of bits
+    ip_temp = ""
+    for octet in ip:
+        temp_val = int(octet)
+        temp_val = bin(temp_val)[2:].zfill(8)
+        temp_val = str(temp_val)
+        ip_temp += temp_val
+    ip_temp = str(ip_temp)
+
+    # preserve bits that are masked with 1 and then
+    # fill zeros everywhere else to the right of this
+    newCidrBit = ""
+    for indx, bit in enumerate(netmask_2):
+        if bit == '1':
+            newCidrBit += ip_temp[indx]
+        elif bit == '0':
+            newCidrBit += '0'
+
+    input_CidrBit = ""
+
+    first_octet = ""
+    for bit in newCidrBit[:8]:
+        first_octet += bit
+
+    second_octet = ""
+    for bit in newCidrBit[8:16]:
+        second_octet += bit
+
+    third_octet = ""
+    for bit in newCidrBit[16:24]:
+        third_octet += bit
+
+    fourth_octet = ""
+    for bit in newCidrBit[24:32]:
+        fourth_octet += bit
+
+    input_CidrBit += str(int(first_octet, base=2))
+    input_CidrBit += "."
+    input_CidrBit += str(int(second_octet, base=2))
+    input_CidrBit += "."
+    input_CidrBit += str(int(third_octet, base=2))
+    input_CidrBit += "."
+    input_CidrBit += str(int(fourth_octet, base=2))
+    input_CidrBit += "/"
+    input_CidrBit += cidrSubnet
+
+    ############################################################################################
+
     # using the ipaddress module of Python
     print("Using import ipaddress:")
     # get network based on cidrNotation
-    network = ipaddress.ip_network(cidrNotation)
+    network = ipaddress.ip_network(input_CidrBit)
     # print out the IP and subnet
     print("IP:{}".format(network, cidrSubnet))
     print("subnet:{}".format(network.netmask))
@@ -187,6 +245,5 @@ def main():
     # print all hosts based off of network
     for host in network.hosts():
         print(host)
-
 
 if __name__ == "__main__": main()

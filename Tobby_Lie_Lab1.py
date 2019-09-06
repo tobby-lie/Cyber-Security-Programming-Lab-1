@@ -78,7 +78,7 @@ def printIPsInSubnet(ip, netmask):
     if int(netmask[2]) < 255:
         # count3 is the available number of addresses
         # based on the value of netmask[2]
-        count3 = 255 - int(netmask[2]
+        count3 = 255 - int(netmask[2])
         # for all values from 0 to count3 populate addresses from 1-255
         for loop3 in range(0, count3):
             for loop4 in range(1, 256):
@@ -113,7 +113,6 @@ def validateInput(cidrNotation):
             return False
     except ValueError:
         return False
-    print(cidrSubnet)
     try:
         # are there 4 numbers in between the dots?
         if len(ipSplit) != 4:
@@ -156,7 +155,6 @@ def main():
     if not validateInput(cidrNotation):
         # incorrect input message
         print("wrong input: input is not in CIDR format")
-        #exit(1)
         return
 
     # parseString contains (['first number', 'secondn number', 'third number', 'fourth number'], 'subnet')
@@ -177,43 +175,6 @@ def main():
     print("subnet: {}.{}.{}.{}".format(netmask[0], netmask[1], netmask[2], netmask[3]))
     print("IPs in Subnet:")
     printIPsInSubnet(ip, netmask)
-
-    '''# need to split up again
-    addressSplit = cidrNotation.split('/')
-    ip = addressSplit[0]
-    cidrSubnet = addressSplit[1]
-    ipSplit = ip.split('.')
-    ipSplit = [int(i) for i in ipSplit]
-    if int(cidrSubnet) >= 1 and int(cidrSubnet) <= 8:
-        indx = 1
-        for octet in ipSplit[1:]:
-            ipSplit[indx] = 0
-            indx += 1
-    elif int(cidrSubnet) >= 9 and int(cidrSubnet) <= 16:
-        indx = 2
-        for octet in ipSplit[2:]:
-            ipSplit[indx] = 0
-            indx += 1
-    elif int(cidrSubnet) >= 17 and int(cidrSubnet) <= 31:
-        indx = 3
-        for octet in ipSplit[3:]:
-            ipSplit[indx] = 0
-            indx += 1
-
-    ipSplit = [str(i) for i in ipSplit]
-    cidrNotation = ""
-
-    cidrNotation = ""
-    for indx,ip  in enumerate(netmask):
-        cidrNotation += ip
-        if indx < 3:
-            cidrNotation += "."
-        else:
-            cidrNotation +="/"
-    cidrNotation += cidrSubnet
-    #print(netmask)
-    print(cidrNotation)
-    '''
 
     # using the ipaddress module of Python
     print("Using import ipaddress:")
